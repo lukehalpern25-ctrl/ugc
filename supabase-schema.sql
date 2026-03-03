@@ -144,3 +144,22 @@ CREATE TABLE notifications_sent (
 
 CREATE INDEX idx_notifications_creator ON notifications_sent(creator_id);
 CREATE INDEX idx_notifications_type ON notifications_sent(creator_id, notification_type);
+
+-- ─── ANALYTICS EVENTS ────────────────────────────────────────────────
+CREATE TABLE analytics_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  event_type TEXT NOT NULL,
+  event_data JSONB DEFAULT '{}',
+  visitor_id TEXT,
+  creator_id UUID REFERENCES creator_profiles(id) ON DELETE SET NULL,
+  page TEXT,
+  referrer TEXT,
+  user_agent TEXT,
+  ip_address TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_analytics_event_type ON analytics_events(event_type);
+CREATE INDEX idx_analytics_created_at ON analytics_events(created_at);
+CREATE INDEX idx_analytics_visitor ON analytics_events(visitor_id);
+CREATE INDEX idx_analytics_page ON analytics_events(page);

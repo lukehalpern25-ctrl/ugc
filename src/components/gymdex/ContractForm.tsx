@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CONTRACT_TEXT } from "@/lib/gymdex/contract";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 import CursiveSignature from "./CursiveSignature";
 
 export default function ContractForm() {
   const router = useRouter();
+  const { track } = useAnalytics();
   const [legalName, setLegalName] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,6 +35,7 @@ export default function ContractForm() {
 
       const { id } = await res.json();
       localStorage.setItem("gymdex-creator-id", id);
+      track("contract_signed", { creator_id: id });
       router.push("/gymdex/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

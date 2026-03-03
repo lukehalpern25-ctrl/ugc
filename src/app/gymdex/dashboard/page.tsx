@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useCreator } from "@/lib/hooks/useCreator";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 import DashboardHeader from "@/components/gymdex/DashboardHeader";
 import PhaseProgress from "@/components/gymdex/PhaseProgress";
 import XPBar from "@/components/gymdex/XPBar";
@@ -19,7 +20,9 @@ import ActivePhase from "@/components/gymdex/phases/ActivePhase";
 export default function DashboardPage() {
   const router = useRouter();
   const { creatorId, data, loading, error, refetch } = useCreator();
+  const { track } = useAnalytics();
   const [showConfetti, setShowConfetti] = useState(false);
+  const trackedPhaseRef = useRef<string | null>(null);
 
   // Redirect if no session
   useEffect(() => {
@@ -27,6 +30,14 @@ export default function DashboardPage() {
       router.replace("/gymdex");
     }
   }, [loading, creatorId, router]);
+
+  // Track dashboard view and current phase
+  useEffect(() => {
+    if (data && trackedPhaseRef.current !== data.profile.current_phase) {
+      trackedPhaseRef.current = data.profile.current_phase;
+      track("dashboard_view", { phase: data.profile.current_phase });
+    }
+  }, [data, track]);
 
   if (loading) {
     return (
@@ -60,6 +71,7 @@ export default function DashboardPage() {
 
   const handlePhaseComplete = () => {
     setShowConfetti(true);
+    track("phase_completed", { phase: profile.current_phase });
     setTimeout(() => setShowConfetti(false), 4000);
     refetch();
   };

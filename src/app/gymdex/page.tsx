@@ -5,9 +5,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PitchSection from "@/components/gymdex/PitchSection";
 import ContractForm from "@/components/gymdex/ContractForm";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 
 export default function GymdexPage() {
   const router = useRouter();
+  const { trackPageView } = useAnalytics();
+
+  // Track page view
+  useEffect(() => {
+    trackPageView("/gymdex");
+  }, [trackPageView]);
 
   // If already signed, redirect to dashboard
   useEffect(() => {
