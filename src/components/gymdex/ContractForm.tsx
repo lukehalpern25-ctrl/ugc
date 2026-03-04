@@ -101,32 +101,34 @@ export default function ContractForm() {
       </div>
 
       {/* Payment handle */}
-      {paymentMethod && (
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-foreground mb-2">
-            {paymentMethod === "paypal"
-              ? "PayPal email"
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-foreground mb-2">
+          {paymentMethod === "paypal"
+            ? "PayPal email"
+            : paymentMethod === "venmo"
+            ? "Venmo username"
+            : paymentMethod === "sideshift"
+            ? "Sideshift address"
+            : "Payment handle"}
+        </label>
+        <input
+          type={paymentMethod === "paypal" ? "email" : "text"}
+          value={paymentHandle}
+          onChange={(e) => setPaymentHandle(e.target.value)}
+          placeholder={
+            paymentMethod === "paypal"
+              ? "you@email.com"
               : paymentMethod === "venmo"
-              ? "Venmo username"
-              : "Sideshift address"}
-          </label>
-          <input
-            type={paymentMethod === "paypal" ? "email" : "text"}
-            value={paymentHandle}
-            onChange={(e) => setPaymentHandle(e.target.value)}
-            placeholder={
-              paymentMethod === "paypal"
-                ? "you@email.com"
-                : paymentMethod === "venmo"
-                ? "@yourvenmo"
-                : "Your sideshift address"
-            }
-            className="w-full px-4 py-3 rounded-lg bg-surface border border-border text-foreground placeholder:text-muted/50 focus:outline-none focus:border-primary transition-colors"
-            disabled={loading}
-            onKeyDown={(e) => e.key === "Enter" && handleSign()}
-          />
-        </div>
-      )}
+              ? "@yourvenmo"
+              : paymentMethod === "sideshift"
+              ? "Your sideshift address"
+              : "Select a payment method above"
+          }
+          className="w-full px-4 py-3 rounded-lg bg-surface border border-border text-foreground placeholder:text-muted/50 focus:outline-none focus:border-primary transition-colors"
+          disabled={loading || !paymentMethod}
+          onKeyDown={(e) => e.key === "Enter" && handleSign()}
+        />
+      </div>
 
       {/* Error */}
       {error && (
