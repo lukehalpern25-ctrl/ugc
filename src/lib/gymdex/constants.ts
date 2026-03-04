@@ -83,27 +83,27 @@ export interface BadgeDef {
 
 export const BADGES: BadgeDef[] = [
   // Onboarding
-  { id: "signed_up", name: "Signed Up", description: "Signed the creator contract", icon: "✍️", category: "onboarding" },
-  { id: "all_set_up", name: "All Set Up", description: "Completed account setup", icon: "⚡", category: "onboarding" },
-  { id: "warmed_up", name: "Warmed Up", description: "Completed the 3-day warm-up", icon: "🔥", category: "onboarding" },
-  { id: "fully_trained", name: "Fully Trained", description: "Completed the posting guide", icon: "🎓", category: "onboarding" },
+  { id: "signed_up", name: "Signed Up", description: "Signed the creator contract", icon: "pen-line", category: "onboarding" },
+  { id: "all_set_up", name: "All Set Up", description: "Completed account setup", icon: "zap", category: "onboarding" },
+  { id: "warmed_up", name: "Warmed Up", description: "Completed the 3-day warm-up", icon: "flame", category: "onboarding" },
+  { id: "fully_trained", name: "Fully Trained", description: "Completed the posting guide", icon: "graduation-cap", category: "onboarding" },
 
   // Posting
-  { id: "first_post", name: "First Post", description: "Logged your first post", icon: "🎬", category: "posting" },
-  { id: "getting_going", name: "Getting Going", description: "Logged 10 posts", icon: "🚀", category: "posting" },
-  { id: "prolific", name: "Prolific", description: "Logged 50 posts", icon: "📹", category: "posting" },
-  { id: "centurion", name: "Centurion", description: "Logged 100 posts", icon: "💯", category: "posting" },
-  { id: "full_day", name: "Full Day", description: "Hit daily posting quota", icon: "📅", category: "posting" },
+  { id: "first_post", name: "First Post", description: "Logged your first post", icon: "clapperboard", category: "posting" },
+  { id: "getting_going", name: "Getting Going", description: "Logged 10 posts", icon: "rocket", category: "posting" },
+  { id: "prolific", name: "Prolific", description: "Logged 50 posts", icon: "camera", category: "posting" },
+  { id: "centurion", name: "Centurion", description: "Logged 100 posts", icon: "award", category: "posting" },
+  { id: "full_day", name: "Full Day", description: "Hit daily posting quota", icon: "calendar-check", category: "posting" },
 
   // Streaks
-  { id: "on_a_roll", name: "On a Roll", description: "3-day posting streak", icon: "🎯", category: "streaks" },
-  { id: "week_warrior", name: "Week Warrior", description: "7-day posting streak", icon: "⚔️", category: "streaks" },
-  { id: "unstoppable", name: "Unstoppable", description: "14-day posting streak", icon: "💪", category: "streaks" },
-  { id: "iron_will", name: "Iron Will", description: "30-day posting streak", icon: "🏆", category: "streaks" },
+  { id: "on_a_roll", name: "On a Roll", description: "3-day posting streak", icon: "target", category: "streaks" },
+  { id: "week_warrior", name: "Week Warrior", description: "7-day posting streak", icon: "swords", category: "streaks" },
+  { id: "unstoppable", name: "Unstoppable", description: "14-day posting streak", icon: "dumbbell", category: "streaks" },
+  { id: "iron_will", name: "Iron Will", description: "30-day posting streak", icon: "trophy", category: "streaks" },
 
   // Special
-  { id: "creator_status", name: "Creator Status", description: "Reached Level 5", icon: "⭐", category: "special" },
-  { id: "legendary", name: "Legendary", description: "Reached Level 10", icon: "👑", category: "special" },
+  { id: "creator_status", name: "Creator Status", description: "Reached Level 5", icon: "star", category: "special" },
+  { id: "legendary", name: "Legendary", description: "Reached Level 10", icon: "crown", category: "special" },
 ];
 
 export function getBadge(id: string): BadgeDef | undefined {
@@ -122,8 +122,8 @@ export interface TierDef {
 
 export const TIERS: TierDef[] = [
   { id: "standard", name: "Standard", monthlyPay: 250, requirement: "Default tier", color: "#9ca3af" },
-  { id: "rising", name: "Rising", monthlyPay: 300, requirement: "90%+ daily quota for 2 weeks", color: "#22c55e" },
-  { id: "top_performer", name: "Top Performer", monthlyPay: 400, requirement: "14-day streak + consistent engagement", color: "#8b5cf6" },
+  { id: "rising", name: "Rising", monthlyPay: 300, requirement: "90%+ daily quota for 4 weeks", color: "#22c55e" },
+  { id: "top_performer", name: "Top Performer", monthlyPay: 400, requirement: "30-day streak + engagement", color: "#8b5cf6" },
   { id: "elite", name: "Elite", monthlyPay: 500, requirement: "30-day streak + top metrics", color: "#fbbf24" },
 ];
 

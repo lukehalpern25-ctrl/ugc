@@ -1,6 +1,7 @@
 "use client";
 
 import { BADGES } from "@/lib/gymdex/constants";
+import { getIcon } from "@/lib/icons";
 
 interface BadgeGridProps {
   earnedBadges: string[];
@@ -42,7 +43,12 @@ export default function BadgeGrid({ earnedBadges }: BadgeGridProps) {
                         : "bg-surface-light border border-border opacity-30 grayscale"
                     }`}
                   >
-                    {badge.icon}
+                    {(() => {
+                      const Icon = getIcon(badge.icon);
+                      return Icon ? (
+                        <Icon size={20} className={earned ? "text-primary-light" : "text-muted"} />
+                      ) : null;
+                    })()}
                   </div>
                 );
               })}

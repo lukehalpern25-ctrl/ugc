@@ -1,6 +1,7 @@
 "use client";
 
 import { Section } from "@/lib/steps";
+import { getIcon } from "@/lib/icons";
 import StepSection from "./StepSection";
 
 interface SectionBlockProps {
@@ -67,9 +68,12 @@ export default function SectionBlock({
                 d="M5 13l4 4L19 7"
               />
             </svg>
-          ) : (
-            <span>{section.icon}</span>
-          )}
+          ) : (() => {
+            const Icon = getIcon(section.icon);
+            return Icon ? (
+              <Icon size={20} className={isActive ? "text-primary-light" : "text-muted"} />
+            ) : null;
+          })()}
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-bold text-foreground">{section.title}</h2>

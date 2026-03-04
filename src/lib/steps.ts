@@ -42,13 +42,13 @@ export const sections: Section[] = [
     id: 1,
     title: "Format Setup",
     subtitle: "Get everything downloaded and configured before filming",
-    icon: "🔧",
+    icon: "wrench",
     steps: [
       {
         id: 1,
         title: "Download Snapchat",
         subtitle: "You'll film your UGC through Snapchat",
-        icon: "👻",
+        icon: "ghost",
         iconImage: "/images/snapchat-icon.webp",
         items: [
           {
@@ -69,7 +69,7 @@ export const sections: Section[] = [
         id: 2,
         title: "Download Gymdex via TestFlight",
         subtitle: "Install the beta version of Gymdex",
-        icon: "📲",
+        icon: "download",
         iconImage: "/images/testflight-icon.webp",
         items: [
           {
@@ -112,7 +112,7 @@ export const sections: Section[] = [
         id: 3,
         title: "Add Gymdex to TikTok Share",
         subtitle: "Set up Gymdex as a share export option in TikTok",
-        icon: "📤",
+        icon: "share",
         items: [
           {
             id: "1-3-1",
@@ -139,13 +139,13 @@ export const sections: Section[] = [
     id: 2,
     title: "Video Setup",
     subtitle: "Understand the filming format and environment",
-    icon: "🎥",
+    icon: "video",
     steps: [
       {
         id: 4,
         title: "Equipment & Filming Format",
         subtitle: "What you need and how the video flows",
-        icon: "📱",
+        icon: "smartphone",
         items: [
           {
             id: "2-1-1",
@@ -167,7 +167,7 @@ export const sections: Section[] = [
         id: 5,
         title: "Filming Environment",
         subtitle: "Where to film your UGC",
-        icon: "🏠",
+        icon: "home",
         items: [
           {
             id: "2-2-1",
@@ -195,13 +195,13 @@ export const sections: Section[] = [
     id: 3,
     title: "How to Film",
     subtitle: "Step-by-step filming instructions for the reaction and demo",
-    icon: "🎬",
+    icon: "clapperboard",
     steps: [
       {
         id: 6,
         title: "How to Film a Reaction",
         subtitle: "The first part of your video — the reaction clip",
-        icon: "😲",
+        icon: "zap",
         items: [
           {
             id: "3-1-1",
@@ -225,7 +225,7 @@ export const sections: Section[] = [
         id: 7,
         title: "How to Film a Demo",
         subtitle: "Showing the Gymdex app in action",
-        icon: "📋",
+        icon: "clipboard-list",
         items: [
           {
             id: "3-2-1",
@@ -264,7 +264,7 @@ export const sections: Section[] = [
         id: 8,
         title: "Adding Snapchat Text",
         subtitle: "Add text overlay to your Snap before sending",
-        icon: "✏️",
+        icon: "pencil",
         items: [
           {
             id: "3-3-1",
@@ -295,13 +295,13 @@ export const sections: Section[] = [
     id: 4,
     title: "Captions, Audio & Hashtags",
     subtitle: "What to write and how to post",
-    icon: "✍️",
+    icon: "type",
     steps: [
       {
         id: 9,
         title: "Audio",
         subtitle: "Do NOT add any music to your post",
-        icon: "🔇",
+        icon: "volume-x",
         items: [
           {
             id: "4-0-1",
@@ -316,7 +316,7 @@ export const sections: Section[] = [
         id: 10,
         title: "Captions",
         subtitle: "Keep it super organic — never mention the app by name",
-        icon: "💬",
+        icon: "message-circle",
         items: [
           {
             id: "4-1-1",
@@ -344,7 +344,7 @@ export const sections: Section[] = [
         id: 11,
         title: "Hashtags",
         subtitle: "Use 3-4 hashtags per post",
-        icon: "#️⃣",
+        icon: "hash",
         items: [
           {
             id: "4-2-1",
@@ -370,13 +370,13 @@ export const sections: Section[] = [
     id: 5,
     title: "Comments",
     subtitle: "Engaging with comments is essential for reach",
-    icon: "💬",
+    icon: "message-square",
     steps: [
       {
         id: 12,
         title: "Responding to Comments",
         subtitle: "This is critical for growing reach",
-        icon: "🔥",
+        icon: "flame",
         items: [
           {
             id: "5-1-1",
@@ -459,7 +459,7 @@ export const resourceSections: ResourceSection[] = [
   {
     id: "example-winners",
     title: "Example Winners",
-    icon: "🏆",
+    icon: "trophy",
     items: [
       {
         id: "win-1",
@@ -490,7 +490,7 @@ export const resourceSections: ResourceSection[] = [
   {
     id: "background-audio",
     title: "Background Audio",
-    icon: "🔊",
+    icon: "volume2",
     description: "Skip to some random part in the middle of the video and play from there.",
     items: [
       {
@@ -508,7 +508,7 @@ export const resourceSections: ResourceSection[] = [
   {
     id: "workout-videos",
     title: "Workout Videos to Import",
-    icon: "💪",
+    icon: "dumbbell",
     description: "Open one of these TikToks on your second phone and use it during filming.",
     items: [
       {
@@ -552,7 +552,7 @@ export const resourceSections: ResourceSection[] = [
   {
     id: "captions-text",
     title: "Captions & Snapchat Text",
-    icon: "✏️",
+    icon: "pencil",
     items: [
       {
         id: "text-snap",

@@ -22,13 +22,12 @@ export default function SetupPhase({
   const [values, setValues] = useState<Record<string, string>>({
     email: profile.email || "",
     phone: profile.phone || "",
-    payment_method: profile.payment_method || "",
-    payment_handle: profile.payment_handle || "",
     tiktok_url: profile.tiktok_url || "",
     instagram_url: profile.instagram_url || "",
   });
   const [saving, setSaving] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showExamples, setShowExamples] = useState(false);
 
   const completedSteps = new Set(
     progress.filter((p) => p.phase === "setup").map((p) => p.step_id)
@@ -218,7 +217,18 @@ export default function SetupPhase({
 
                   {/* URL fields */}
                   {!isCompleted && !isLocked && step.type === "url" && step.field && (
-                    <div className="mt-3 flex gap-2">
+                    <div className="mt-3">
+                      {step.details && (
+                        <ul className="space-y-1.5 mb-3">
+                          {step.details.map((detail, i) => (
+                            <li key={i} className="text-sm text-muted flex items-start gap-2">
+                              <span className="text-primary mt-0.5">&bull;</span>
+                              {detail}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <div className="flex gap-2">
                       <input
                         type="url"
                         value={values[step.field] || ""}
@@ -235,6 +245,7 @@ export default function SetupPhase({
                       >
                         {isSaving ? "..." : "Save"}
                       </button>
+                      </div>
                     </div>
                   )}
 
@@ -242,13 +253,42 @@ export default function SetupPhase({
                   {!isCompleted && !isLocked && step.type === "checkbox" && step.details && (
                     <div className="mt-3">
                       <ul className="space-y-1.5 mb-3">
-                        {step.details.map((detail, i) => (
-                          <li key={i} className="text-sm text-muted flex items-start gap-2">
-                            <span className="text-primary mt-0.5">&bull;</span>
-                            {detail}
-                          </li>
-                        ))}
+                        {step.details.map((detail, i) => {
+                          const isBioLine = step.examples && detail.toLowerCase().includes("bio");
+                          return (
+                            <li key={i} className="text-sm text-muted flex items-start gap-2">
+                              <span className="text-primary mt-0.5">&bull;</span>
+                              <span>
+                                {detail}
+                                {isBioLine && (
+                                  <>
+                                    {" "}
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowExamples(!showExamples)}
+                                      className="text-xs text-primary-light font-medium hover:text-primary transition-colors"
+                                    >
+                                      {showExamples ? "(hide)" : "(bio examples)"}
+                                    </button>
+                                  </>
+                                )}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
+                      {step.examples && showExamples && (
+                        <div className="mb-3 grid grid-cols-2 gap-1.5">
+                          {step.examples.map((ex, i) => (
+                            <div
+                              key={i}
+                              className="px-3 py-2 bg-surface-light border border-border rounded-lg text-xs text-muted"
+                            >
+                              {ex}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <button
                         onClick={() => handleCheckboxStep(step.id)}
                         disabled={isSaving}

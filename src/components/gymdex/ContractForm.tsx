@@ -4,17 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CONTRACT_TEXT } from "@/lib/gymdex/contract";
 import { useAnalytics } from "@/lib/hooks/useAnalytics";
-import CursiveSignature from "./CursiveSignature";
 
 export default function ContractForm() {
   const router = useRouter();
   const { track } = useAnalytics();
   const [legalName, setLegalName] = useState("");
-  const [agreed, setAgreed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentHandle, setPaymentHandle] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const canSign = legalName.trim().length >= 2 && agreed && !loading;
+  const canSign =
+    legalName.trim().length >= 2 &&
+    paymentMethod !== "" &&
+    paymentHandle.trim().length >= 3 &&
+    !loading;
 
   const handleSign = async () => {
     if (!canSign) return;
@@ -25,7 +29,11 @@ export default function ContractForm() {
       const res = await fetch("/api/gymdex/contract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ legal_name: legalName.trim() }),
+        body: JSON.stringify({
+          legal_name: legalName.trim(),
+          payment_method: paymentMethod,
+          payment_handle: paymentHandle.trim(),
+        }),
       });
 
       if (!res.ok) {
@@ -45,17 +53,10 @@ export default function ContractForm() {
 
   return (
     <div id="contract" className="scroll-mt-8">
-      {/* Contract text */}
-      <div className="rounded-xl border border-border bg-surface p-1">
-        <div className="max-h-64 overflow-y-auto p-4 text-sm text-muted leading-relaxed whitespace-pre-line no-scrollbar">
-          {CONTRACT_TEXT}
-        </div>
-      </div>
-
       {/* Name input */}
-      <div className="mt-6">
+      <div>
         <label className="block text-sm font-medium text-foreground mb-2">
-          Your Legal Full Name
+          Full name
         </label>
         <input
           type="text"
@@ -64,26 +65,68 @@ export default function ContractForm() {
           placeholder="John Smith"
           className="w-full px-4 py-3 rounded-lg bg-surface border border-border text-foreground placeholder:text-muted/50 focus:outline-none focus:border-primary transition-colors"
           disabled={loading}
+          onKeyDown={(e) => e.key === "Enter" && handleSign()}
         />
       </div>
 
-      {/* Signature preview */}
-      <CursiveSignature name={legalName} />
+      {/* Payment method */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-foreground mb-2">
+          Payment method
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { value: "paypal", label: "PayPal" },
+            { value: "venmo", label: "Venmo" },
+            { value: "sideshift", label: "Crypto" },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                setPaymentMethod(opt.value);
+                setPaymentHandle("");
+              }}
+              className={`px-3 py-3 rounded-lg border text-sm font-medium transition-all ${
+                paymentMethod === opt.value
+                  ? "border-primary bg-primary/10 text-primary-light"
+                  : "border-border bg-surface text-muted hover:border-primary/50"
+              }`}
+              disabled={loading}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* Agreement checkbox */}
-      <label className="flex items-start gap-3 mt-5 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-1 w-5 h-5 rounded border-border text-primary focus:ring-primary accent-primary"
-          disabled={loading}
-        />
-        <span className="text-sm text-muted leading-relaxed">
-          I have read and agree to the Creator Agreement above. I understand this
-          is a binding contract.
-        </span>
-      </label>
+      {/* Payment handle */}
+      {paymentMethod && (
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-foreground mb-2">
+            {paymentMethod === "paypal"
+              ? "PayPal email"
+              : paymentMethod === "venmo"
+              ? "Venmo username"
+              : "Sideshift address"}
+          </label>
+          <input
+            type={paymentMethod === "paypal" ? "email" : "text"}
+            value={paymentHandle}
+            onChange={(e) => setPaymentHandle(e.target.value)}
+            placeholder={
+              paymentMethod === "paypal"
+                ? "you@email.com"
+                : paymentMethod === "venmo"
+                ? "@yourvenmo"
+                : "Your sideshift address"
+            }
+            className="w-full px-4 py-3 rounded-lg bg-surface border border-border text-foreground placeholder:text-muted/50 focus:outline-none focus:border-primary transition-colors"
+            disabled={loading}
+            onKeyDown={(e) => e.key === "Enter" && handleSign()}
+          />
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -94,7 +137,7 @@ export default function ContractForm() {
       <button
         onClick={handleSign}
         disabled={!canSign}
-        className={`w-full mt-6 py-4 rounded-xl font-bold text-lg transition-all ${
+        className={`w-full mt-4 py-4 rounded-xl font-bold text-lg transition-all ${
           canSign
             ? "bg-primary text-white hover:bg-primary-dark active:scale-[0.98]"
             : "bg-surface text-muted cursor-not-allowed"
@@ -106,9 +149,18 @@ export default function ContractForm() {
             Signing...
           </span>
         ) : (
-          "Sign & Get Started"
+          "Sign & get started"
         )}
       </button>
+
+      {/* Contract text */}
+      <div className="mt-6 rounded-xl border border-border bg-surface p-4 max-h-64 overflow-y-auto text-xs text-muted leading-relaxed whitespace-pre-line no-scrollbar">
+        {CONTRACT_TEXT}
+      </div>
+
+      <p className="text-xs text-muted text-center mt-3">
+        By signing above, you agree to the creator agreement
+      </p>
     </div>
   );
 }

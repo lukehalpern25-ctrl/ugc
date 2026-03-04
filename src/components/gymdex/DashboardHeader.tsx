@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Flame } from "lucide-react";
 import { getLevelForXP } from "@/lib/gymdex/constants";
 
 interface DashboardHeaderProps {
@@ -34,7 +35,7 @@ export default function DashboardHeader({ name, xp, streak }: DashboardHeaderPro
           <div className="flex items-center gap-4">
             {streak > 0 && (
               <div className="flex items-center gap-1.5">
-                <span className="text-lg flame-pulse">🔥</span>
+                <span className="flame-pulse"><Flame size={20} className="text-orange-500" /></span>
                 <span className="text-sm font-bold text-foreground">{streak}</span>
               </div>
             )}

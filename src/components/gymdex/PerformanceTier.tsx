@@ -1,7 +1,10 @@
 "use client";
 
 import { TIERS, getTier } from "@/lib/gymdex/constants";
+import { Star, Sparkles, Gem, Crown } from "lucide-react";
 import type { PerformanceTier as TierType } from "@/lib/gymdex/types";
+
+const TIER_ICONS = [Star, Sparkles, Gem, Crown];
 
 interface PerformanceTierProps {
   tier: TierType;
@@ -25,7 +28,10 @@ export default function PerformanceTier({ tier }: PerformanceTierProps) {
             borderWidth: 2,
           }}
         >
-          {currentIndex === 0 ? "⭐" : currentIndex === 1 ? "🌟" : currentIndex === 2 ? "💎" : "👑"}
+          {(() => {
+            const Icon = TIER_ICONS[currentIndex] || Star;
+            return <Icon size={20} style={{ color: currentTier?.color }} />;
+          })()}
         </div>
         <div>
           <p className="font-bold text-foreground">{currentTier?.name}</p>

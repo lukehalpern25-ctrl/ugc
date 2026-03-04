@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { resourceSections } from "@/lib/steps";
+import { getIcon } from "@/lib/icons";
 import InlineVideo from "./InlineVideo";
 
 export default function ResourcesTab() {
@@ -34,7 +35,10 @@ export default function ResourcesTab() {
               onClick={() => toggleSection(section.id)}
               className="w-full flex items-center gap-3 p-4 text-left active:bg-surface-light transition-colors"
             >
-              <span className="text-2xl">{section.icon}</span>
+              {(() => {
+                const Icon = getIcon(section.icon);
+                return Icon ? <Icon size={24} className="text-muted" /> : null;
+              })()}
               <span className="flex-1 font-semibold text-foreground">
                 {section.title}
               </span>

@@ -1,5 +1,7 @@
 "use client";
 
+import { Flame } from "lucide-react";
+
 interface StreakCounterProps {
   currentStreak: number;
   longestStreak: number;
@@ -10,8 +12,8 @@ export default function StreakCounter({ currentStreak, longestStreak }: StreakCo
     <div className="rounded-xl border border-border bg-surface p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className={`text-2xl ${currentStreak > 0 ? "flame-pulse" : ""}`}>
-            🔥
+          <span className={currentStreak > 0 ? "flame-pulse" : ""}>
+            <Flame size={28} className={currentStreak > 0 ? "text-orange-500" : "text-muted"} />
           </span>
           <div>
             <p className="text-2xl font-bold text-foreground">{currentStreak}</p>

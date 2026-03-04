@@ -10,6 +10,7 @@ export interface PhaseStep {
   placeholder?: string;
   options?: { value: string; label: string }[];
   details?: string[];
+  examples?: string[];
 }
 
 export interface PhaseDef {
@@ -25,8 +26,8 @@ export interface PhaseDef {
 export const setupPhase: PhaseDef = {
   id: "setup",
   title: "Account Setup",
-  subtitle: "Set up your creator accounts and payment info",
-  icon: "⚙️",
+  subtitle: "Set up your creator accounts",
+  icon: "settings",
   steps: [
     {
       id: "setup-email",
@@ -46,54 +47,50 @@ export const setupPhase: PhaseDef = {
       placeholder: "(555) 555-5555",
     },
     {
-      id: "setup-payment",
-      title: "Payment Method",
-      description: "How would you like to get paid?",
-      type: "select",
-      field: "payment_method",
-      required: true,
-      options: [
-        { value: "paypal", label: "PayPal" },
-        { value: "sideshift", label: "Sideshift (crypto)" },
-      ],
-    },
-    {
-      id: "setup-payment-handle",
-      title: "Payment Handle",
-      description: "Your PayPal email or Sideshift address.",
-      type: "input",
-      field: "payment_handle",
-      required: true,
-      placeholder: "paypal@example.com",
-    },
-    {
       id: "setup-tiktok",
       title: "Create a TikTok Account",
-      description: "Create a new TikTok account for posting Gymdex content. Use a fitness-related username. Submit the profile URL below.",
+      description: "Create a new TikTok account and submit the profile URL below.",
       type: "url",
       field: "tiktok_url",
       required: true,
       placeholder: "https://tiktok.com/@yourusername",
+      details: [
+        "Username should be a random first name and last name",
+        "Add a random birth year if necessary (e.g. jessica.miller98)",
+      ],
     },
     {
       id: "setup-instagram",
       title: "Create an Instagram Account",
-      description: "Create a new Instagram account (Reels). Use a matching username. Submit the profile URL below.",
+      description: "Create a new Instagram account and submit the profile URL below.",
       type: "url",
       field: "instagram_url",
       required: true,
       placeholder: "https://instagram.com/yourusername",
+      details: [
+        "Username should be a random first name and last name",
+        "Add a random birth year if necessary (e.g. jessica.miller98)",
+      ],
     },
     {
       id: "setup-bio-check",
       title: "Confirm Bio & Username",
-      description: "Make sure your accounts look organic:",
+      description: "Make sure your accounts look organic. DO NOT MENTION GYMDEX.",
       type: "checkbox",
       details: [
         "Username looks like a real person (not branded)",
-        "Bio mentions fitness/gym/workout naturally",
-        "Profile pic is a real photo (not a logo)",
-        "No mention of Gymdex anywhere on profile",
+        "Bio is casual and organic. DO NOT mention Gymdex",
+        "Profile pic is a real photo of a person",
+      ],
+      examples: [
+        "gym rat in progress",
+        "lifting heavy & eating clean",
+        "just a guy who likes the gym",
+        "fitness journey starts here",
+        "legs > everything",
+        "cardio is a personality trait",
+        "protein shake enthusiast",
+        "gym, sleep, repeat",
       ],
     },
   ],
@@ -123,17 +120,17 @@ export const warmupDays: WarmupDayDef[] = [
       {
         id: "d1-scroll",
         title: "Scroll TikTok for 15-30 minutes",
-        description: "Browse fitness content on your For You Page. Like and engage naturally.",
+        description: "Like and engage naturally.",
       },
       {
         id: "d1-comment",
-        title: "Comment on 5 fitness posts",
-        description: "Leave genuine comments on fitness/gym videos. Be authentic.",
+        title: "Comment on 5 posts",
+        description: "No emojis, casual, authentic.",
       },
       {
         id: "d1-follow",
-        title: "Follow 10 fitness accounts",
-        description: "Follow popular fitness creators and gym accounts.",
+        title: "Follow 10 accounts",
+        description: "",
       },
     ],
   },
@@ -145,17 +142,17 @@ export const warmupDays: WarmupDayDef[] = [
       {
         id: "d2-scroll",
         title: "Scroll TikTok for 15-30 minutes",
-        description: "Keep engaging with fitness content to train the algorithm.",
+        description: "Like and engage naturally.",
       },
       {
         id: "d2-comment",
-        title: "Comment on 5 fitness posts",
-        description: "More genuine comments on different videos.",
+        title: "Comment on 5 posts",
+        description: "No emojis, casual, authentic.",
       },
       {
         id: "d2-follow",
-        title: "Follow 10 more fitness accounts",
-        description: "Expand your fitness network.",
+        title: "Follow 10 more accounts",
+        description: "",
       },
     ],
   },
@@ -167,17 +164,17 @@ export const warmupDays: WarmupDayDef[] = [
       {
         id: "d3-scroll",
         title: "Scroll TikTok for 15-30 minutes",
-        description: "Final day of algorithm training.",
+        description: "Like and engage naturally.",
       },
       {
         id: "d3-comment",
-        title: "Comment on 5 fitness posts",
-        description: "Keep the engagement going.",
+        title: "Comment on 5 posts",
+        description: "No emojis, casual, authentic.",
       },
       {
         id: "d3-follow",
-        title: "Follow 10 more fitness accounts",
-        description: "Round out your following list.",
+        title: "Follow 10 more accounts",
+        description: "",
       },
       {
         id: "d3-post",
@@ -191,8 +188,8 @@ export const warmupDays: WarmupDayDef[] = [
 // ─── Phase Metadata ─────────────────────────────────────────────────
 
 export const PHASE_ORDER: { id: string; label: string; icon: string }[] = [
-  { id: "setup", label: "Setup", icon: "⚙️" },
-  { id: "warmup", label: "Warm-up", icon: "🔥" },
-  { id: "posting", label: "Posting", icon: "🎬" },
-  { id: "active", label: "Active", icon: "📊" },
+  { id: "setup", label: "Setup", icon: "settings" },
+  { id: "warmup", label: "Warm-up", icon: "flame" },
+  { id: "posting", label: "Posting", icon: "clapperboard" },
+  { id: "active", label: "Active", icon: "bar-chart" },
 ];

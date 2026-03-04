@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Step } from "@/lib/steps";
+import { getIcon } from "@/lib/icons";
 import CheckboxItem from "./CheckboxItem";
 
 interface StepSectionProps {
@@ -68,9 +69,12 @@ export default function StepSection({
               height={36}
               className="w-full h-full object-cover rounded-full"
             />
-          ) : (
-            <span className="text-sm">{step.icon}</span>
-          )}
+          ) : (() => {
+            const Icon = getIcon(step.icon);
+            return Icon ? (
+              <Icon size={16} className={isStepActive ? "text-primary-light" : "text-muted"} />
+            ) : null;
+          })()}
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between">

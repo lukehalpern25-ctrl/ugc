@@ -2,6 +2,14 @@
 
 import { PHASE_ORDER } from "@/lib/gymdex/phases";
 import type { Phase } from "@/lib/gymdex/types";
+import { Settings, Flame, Clapperboard, BarChart3 } from "lucide-react";
+
+const PHASE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  setup: Settings,
+  warmup: Flame,
+  posting: Clapperboard,
+  active: BarChart3,
+};
 
 interface PhaseProgressProps {
   currentPhase: Phase;
@@ -16,6 +24,7 @@ export default function PhaseProgress({ currentPhase }: PhaseProgressProps) {
         const isComplete = i < currentIndex;
         const isCurrent = i === currentIndex;
         const isLocked = i > currentIndex;
+        const Icon = PHASE_ICONS[phase.id];
 
         return (
           <div key={phase.id} className="flex-1 flex flex-col items-center gap-1.5">
@@ -41,9 +50,18 @@ export default function PhaseProgress({ currentPhase }: PhaseProgressProps) {
                   <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                ) : (
-                  <span className={isLocked ? "opacity-40" : ""}>{phase.icon}</span>
-                )}
+                ) : Icon ? (
+                  <Icon
+                    size={16}
+                    className={
+                      isCurrent
+                        ? "text-primary-light"
+                        : isLocked
+                        ? "text-muted/40"
+                        : "text-muted"
+                    }
+                  />
+                ) : null}
               </div>
               {i < PHASE_ORDER.length - 1 && (
                 <div
