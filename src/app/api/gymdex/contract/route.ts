@@ -7,11 +7,26 @@ import { sendNotification } from "@/lib/gymdex/notifications";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { legal_name } = body;
+    const { legal_name, payment_method, payment_handle } = body;
 
     if (!legal_name || typeof legal_name !== "string" || legal_name.trim().length < 2) {
       return NextResponse.json(
         { error: "Legal name is required (minimum 2 characters)" },
+        { status: 400 }
+      );
+    }
+
+    const validPaymentMethods = ["paypal", "venmo", "sideshift"];
+    if (!payment_method || !validPaymentMethods.includes(payment_method)) {
+      return NextResponse.json(
+        { error: "Valid payment method is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!payment_handle || typeof payment_handle !== "string" || payment_handle.trim().length < 3) {
+      return NextResponse.json(
+        { error: "Payment handle is required (minimum 3 characters)" },
         { status: 400 }
       );
     }
@@ -23,6 +38,8 @@ export async function POST(request: NextRequest) {
       .from("creator_profiles")
       .insert({
         legal_name: legal_name.trim(),
+        payment_method,
+        payment_handle: payment_handle.trim(),
         contract_ip_address: ip === "unknown" ? null : ip.split(",")[0].trim(),
         contract_user_agent: userAgent,
         contract_version: CONTRACT_VERSION,

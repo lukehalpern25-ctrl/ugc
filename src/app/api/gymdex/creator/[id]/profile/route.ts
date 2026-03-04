@@ -34,7 +34,7 @@ export async function PATCH(
   }
 
   // Validate payment method
-  if (updates.payment_method && !["paypal", "sideshift"].includes(updates.payment_method)) {
+  if (updates.payment_method && !["paypal", "venmo", "sideshift"].includes(updates.payment_method)) {
     return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
   }
 

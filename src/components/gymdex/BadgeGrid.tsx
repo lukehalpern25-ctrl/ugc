@@ -34,21 +34,25 @@ export default function BadgeGrid({ earnedBadges }: BadgeGridProps) {
               {catBadges.map((badge) => {
                 const earned = earnedSet.has(badge.id);
                 return (
-                  <div
-                    key={badge.id}
-                    title={earned ? `${badge.name}: ${badge.description}` : `Locked: ${badge.description}`}
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${
-                      earned
-                        ? "bg-primary/10 border border-primary/30 badge-unlock"
-                        : "bg-surface-light border border-border opacity-30 grayscale"
-                    }`}
-                  >
-                    {(() => {
-                      const Icon = getIcon(badge.icon);
-                      return Icon ? (
-                        <Icon size={20} className={earned ? "text-primary-light" : "text-muted"} />
-                      ) : null;
-                    })()}
+                  <div key={badge.id} className="relative group">
+                    <div
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${
+                        earned
+                          ? "bg-primary/10 border border-primary/30 badge-unlock"
+                          : "bg-surface-light border border-border opacity-30 grayscale"
+                      }`}
+                    >
+                      {(() => {
+                        const Icon = getIcon(badge.icon);
+                        return Icon ? (
+                          <Icon size={20} className={earned ? "text-primary-light" : "text-muted"} />
+                        ) : null;
+                      })()}
+                    </div>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-surface-light border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 pointer-events-none z-50 w-44">
+                      <p className="text-xs font-semibold text-foreground">{earned ? badge.name : "Locked"}</p>
+                      <p className="text-[10px] text-muted mt-0.5">{badge.description}</p>
+                    </div>
                   </div>
                 );
               })}

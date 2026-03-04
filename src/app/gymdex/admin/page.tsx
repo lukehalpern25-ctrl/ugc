@@ -23,7 +23,7 @@ interface AdminData {
   };
   phaseCounts: Record<string, number>;
   phaseCompletions: Record<string, number>;
-  recentCreators: {
+  creators: {
     id: string;
     legal_name: string;
     email: string | null;
@@ -31,6 +31,8 @@ interface AdminData {
     xp: number;
     level: number;
     current_streak: number;
+    tiktok_url: string | null;
+    instagram_url: string | null;
     created_at: string;
   }[];
   chart: { date: string; views: number; signups: number }[];
@@ -100,7 +102,7 @@ export default function AdminPage() {
 
   if (!data) return null;
 
-  const { overview, funnel, phaseCounts, phaseCompletions, recentCreators, chart } = data;
+  const { overview, funnel, phaseCounts, phaseCompletions, creators, chart } = data;
 
   // Funnel steps
   const funnelSteps = [
@@ -217,16 +219,20 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Recent Creators */}
+        {/* All Creators */}
         <div className="rounded-xl border border-border bg-surface p-5">
-          <h2 className="text-base font-bold text-foreground mb-4">Recent Creators</h2>
+          <h2 className="text-base font-bold text-foreground mb-4">
+            All Creators
+            <span className="text-sm font-normal text-muted ml-2">({creators.length})</span>
+          </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-muted border-b border-border">
                   <th className="pb-2 font-medium">Name</th>
-                  <th className="pb-2 font-medium">Email</th>
                   <th className="pb-2 font-medium">Phase</th>
+                  <th className="pb-2 font-medium">TikTok</th>
+                  <th className="pb-2 font-medium">Instagram</th>
                   <th className="pb-2 font-medium">Level</th>
                   <th className="pb-2 font-medium">XP</th>
                   <th className="pb-2 font-medium">Streak</th>
@@ -234,12 +240,42 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {recentCreators.map((creator) => (
+                {creators.map((creator) => (
                   <tr key={creator.id} className="border-b border-border/50">
-                    <td className="py-2.5 font-medium text-foreground">{creator.legal_name}</td>
-                    <td className="py-2.5 text-muted">{creator.email || "—"}</td>
+                    <td className="py-2.5">
+                      <p className="font-medium text-foreground">{creator.legal_name}</p>
+                      <p className="text-xs text-muted">{creator.email || "—"}</p>
+                    </td>
                     <td className="py-2.5">
                       <PhaseTag phase={creator.current_phase} />
+                    </td>
+                    <td className="py-2.5">
+                      {creator.tiktok_url ? (
+                        <a
+                          href={creator.tiktok_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-light hover:text-primary text-xs underline underline-offset-2"
+                        >
+                          {creator.tiktok_url.replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/, "@")}
+                        </a>
+                      ) : (
+                        <span className="text-muted text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="py-2.5">
+                      {creator.instagram_url ? (
+                        <a
+                          href={creator.instagram_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-light hover:text-primary text-xs underline underline-offset-2"
+                        >
+                          {creator.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, "@")}
+                        </a>
+                      ) : (
+                        <span className="text-muted text-xs">—</span>
+                      )}
                     </td>
                     <td className="py-2.5 text-muted">Lv.{creator.level}</td>
                     <td className="py-2.5 text-muted">{creator.xp}</td>
@@ -251,9 +287,9 @@ export default function AdminPage() {
                     </td>
                   </tr>
                 ))}
-                {recentCreators.length === 0 && (
+                {creators.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="py-6 text-center text-muted">
+                    <td colSpan={8} className="py-6 text-center text-muted">
                       No creators yet
                     </td>
                   </tr>

@@ -15,7 +15,7 @@ CREATE TABLE creator_profiles (
 
   email TEXT,
   phone TEXT,
-  payment_method TEXT CHECK (payment_method IN ('paypal', 'sideshift')),
+  payment_method TEXT CHECK (payment_method IN ('paypal', 'venmo', 'sideshift')),
   payment_handle TEXT,
 
   tiktok_username TEXT,
@@ -163,3 +163,4 @@ CREATE INDEX idx_analytics_event_type ON analytics_events(event_type);
 CREATE INDEX idx_analytics_created_at ON analytics_events(created_at);
 CREATE INDEX idx_analytics_visitor ON analytics_events(visitor_id);
 CREATE INDEX idx_analytics_page ON analytics_events(page);
+CREATE INDEX idx_analytics_ip ON analytics_events(ip_address);

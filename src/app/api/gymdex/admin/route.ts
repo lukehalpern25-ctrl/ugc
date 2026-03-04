@@ -81,12 +81,11 @@ export async function GET(request: NextRequest) {
       .select("event_data")
       .eq("event_type", "phase_completed"),
 
-    // Recent creators (last 10)
+    // All creators
     supabase
       .from("creator_profiles")
-      .select("id, legal_name, email, current_phase, xp, level, current_streak, created_at")
-      .order("created_at", { ascending: false })
-      .limit(10),
+      .select("id, legal_name, email, current_phase, xp, level, current_streak, tiktok_url, instagram_url, created_at")
+      .order("created_at", { ascending: false }),
 
     // Daily page views (last 30 days)
     supabase
@@ -192,7 +191,7 @@ export async function GET(request: NextRequest) {
     phaseCounts,
     dashboardPhaseViews,
     phaseCompletions,
-    recentCreators: recentCreatorsRes.data || [],
+    creators: recentCreatorsRes.data || [],
     chart,
   });
 }

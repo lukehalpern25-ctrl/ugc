@@ -14,6 +14,21 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get("user-agent") || null;
     const referrer = request.headers.get("referer") || null;
 
+    // Deduplicate page views by IP + page — one view per IP per page
+    if (event_type === "page_view" && ip) {
+      const eventPage = event_data?.page || page;
+      const { count } = await supabase
+        .from("analytics_events")
+        .select("*", { count: "exact", head: true })
+        .eq("event_type", "page_view")
+        .eq("ip_address", ip)
+        .contains("event_data", { page: eventPage });
+
+      if (count && count > 0) {
+        return NextResponse.json({ ok: true, deduplicated: true });
+      }
+    }
+
     await supabase.from("analytics_events").insert({
       event_type,
       event_data: event_data || {},

@@ -48,12 +48,9 @@ export default function GymdexPage() {
 
         {/* Contract Section */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold text-center text-foreground mb-2">
-            Ready to Start?
+          <h2 className="text-2xl font-bold text-center text-foreground mb-6">
+            Ready to start?
           </h2>
-          <p className="text-center text-sm text-muted mb-6">
-            Read the agreement below and sign to get started
-          </p>
           <ContractForm />
         </section>
       </main>
