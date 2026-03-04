@@ -69,15 +69,17 @@ export default function PitchSection() {
       {/* Testimonial */}
       <section className="rounded-xl border border-border bg-surface p-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-lg text-primary-light">J</span>
-          </div>
+          <img
+            src="/images/testimonial-avatar.png"
+            alt="Samantha"
+            className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+          />
           <div>
             <p className="text-foreground leading-relaxed">
               &ldquo;Got my first $250 on March 1st. Took me an hour to film
               everything.&rdquo;
             </p>
-            <p className="text-sm text-muted mt-2">&mdash; Jordan M., Gymdex creator</p>
+            <p className="text-sm text-muted mt-2">Samantha R., Gymdex creator</p>
           </div>
         </div>
       </section>
