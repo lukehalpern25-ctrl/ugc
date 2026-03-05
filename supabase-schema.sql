@@ -15,7 +15,7 @@ CREATE TABLE creator_profiles (
 
   email TEXT,
   phone TEXT,
-  payment_method TEXT CHECK (payment_method IN ('paypal', 'venmo', 'sideshift')),
+  payment_method TEXT CHECK (payment_method IN ('sideshift')),
   payment_handle TEXT,
 
   tiktok_username TEXT,
@@ -156,6 +156,7 @@ CREATE TABLE analytics_events (
   referrer TEXT,
   user_agent TEXT,
   ip_address TEXT,
+  dedupe_key TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -164,3 +165,6 @@ CREATE INDEX idx_analytics_created_at ON analytics_events(created_at);
 CREATE INDEX idx_analytics_visitor ON analytics_events(visitor_id);
 CREATE INDEX idx_analytics_page ON analytics_events(page);
 CREATE INDEX idx_analytics_ip ON analytics_events(ip_address);
+
+-- Unique constraint for deduplication (only where dedupe_key is not null)
+CREATE UNIQUE INDEX idx_analytics_dedupe ON analytics_events(dedupe_key) WHERE dedupe_key IS NOT NULL;

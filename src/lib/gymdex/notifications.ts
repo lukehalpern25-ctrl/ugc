@@ -13,95 +13,87 @@ interface EmailTemplate {
 }
 
 function getTemplate(type: string, data: Record<string, string>): EmailTemplate {
-  const name = data.name || "Creator";
+  const name = data.name || "there";
 
   switch (type) {
     case "welcome":
       return {
-        subject: "You're in! Here's what's next",
+        subject: "hey, you're in",
         html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #ededed; background: #0a0a0a;">
-            <h1 style="color: #a78bfa; font-size: 24px;">Welcome to Gymdex, ${name}!</h1>
-            <p style="color: #9ca3af; line-height: 1.6;">You've signed the creator agreement. Now let's get you set up and earning.</p>
-            <p style="color: #9ca3af; line-height: 1.6;">Your next steps:</p>
-            <ol style="color: #9ca3af; line-height: 1.8;">
-              <li>Set up your payment info</li>
-              <li>Create your TikTok & Instagram accounts</li>
-              <li>Complete the 3-day warm-up</li>
-              <li>Start posting and earning $250+/month</li>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #333;">
+            <p style="font-size: 16px; line-height: 1.6;">hey ${name},</p>
+            <p style="font-size: 16px; line-height: 1.6;">you're signed up. here's what to do next:</p>
+            <ol style="font-size: 16px; line-height: 1.8;">
+              <li>add your payment info</li>
+              <li>create your tiktok & instagram accounts</li>
+              <li>do the 3-day warm-up</li>
+              <li>start posting</li>
             </ol>
-            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Go to Dashboard</a>
+            <p style="font-size: 16px; line-height: 1.6;">takes like 10 min to set up, then you're good to go.</p>
+            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">go to dashboard</a>
+            <p style="font-size: 16px; line-height: 1.6; margin-top: 24px;">- luke</p>
           </div>
         `,
       };
 
     case "stall_setup":
       return {
-        subject: "Your account is waiting — 10 min to finish",
+        subject: "quick reminder",
         html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #ededed; background: #0a0a0a;">
-            <h1 style="color: #a78bfa; font-size: 24px;">Hey ${name},</h1>
-            <p style="color: #9ca3af; line-height: 1.6;">You started setting up your creator account but haven't finished yet. It only takes about 10 minutes to complete.</p>
-            <p style="color: #9ca3af; line-height: 1.6;">Once you're set up, you'll be earning $250/month posting videos from your phone.</p>
-            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Finish Setup</a>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #333;">
+            <p style="font-size: 16px; line-height: 1.6;">hey ${name},</p>
+            <p style="font-size: 16px; line-height: 1.6;">noticed you haven't finished setting up yet. it's like 10 min max.</p>
+            <p style="font-size: 16px; line-height: 1.6;">once you're done you can start posting and earning.</p>
+            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">finish setup</a>
+            <p style="font-size: 16px; line-height: 1.6; margin-top: 24px;">- luke</p>
           </div>
         `,
       };
 
     case "stall_warmup":
       return {
-        subject: "Your warm-up tasks are ready",
+        subject: "your next warm-up day is ready",
         html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #ededed; background: #0a0a0a;">
-            <h1 style="color: #a78bfa; font-size: 24px;">Your warm-up tasks are ready!</h1>
-            <p style="color: #9ca3af; line-height: 1.6;">${name}, your next warm-up day is unlocked. Complete the tasks to move closer to posting and earning.</p>
-            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Continue Warm-up</a>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #333;">
+            <p style="font-size: 16px; line-height: 1.6;">hey ${name},</p>
+            <p style="font-size: 16px; line-height: 1.6;">your next warm-up day just unlocked. hop in and knock it out when you get a sec.</p>
+            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">continue warm-up</a>
+            <p style="font-size: 16px; line-height: 1.6; margin-top: 24px;">- luke</p>
           </div>
         `,
       };
 
     case "stall_posting":
       return {
-        subject: "Almost ready to start earning",
+        subject: "you're almost there",
         html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #ededed; background: #0a0a0a;">
-            <h1 style="color: #a78bfa; font-size: 24px;">You're so close, ${name}!</h1>
-            <p style="color: #9ca3af; line-height: 1.6;">You're in the posting guide phase. Finish reviewing the guide and you'll be ready to start posting and earning $250+/month.</p>
-            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Continue Guide</a>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #333;">
+            <p style="font-size: 16px; line-height: 1.6;">hey ${name},</p>
+            <p style="font-size: 16px; line-height: 1.6;">just gotta finish reading through the posting guide and you're ready to start earning.</p>
+            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">finish guide</a>
+            <p style="font-size: 16px; line-height: 1.6; margin-top: 24px;">- luke</p>
           </div>
         `,
       };
 
     case "missed_posts_2day":
       return {
-        subject: `Your streak was at ${data.streak} days. Post today.`,
+        subject: "hey, don't lose your streak",
         html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #ededed; background: #0a0a0a;">
-            <h1 style="color: #a78bfa; font-size: 24px;">Don't lose your streak!</h1>
-            <p style="color: #9ca3af; line-height: 1.6;">${name}, you had a ${data.streak}-day posting streak going. It's been 2 days since your last post.</p>
-            <p style="color: #9ca3af; line-height: 1.6;">Post today to keep your streak alive and stay on track for your monthly earnings.</p>
-            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Go to Dashboard</a>
-          </div>
-        `,
-      };
-
-    case "phase_complete":
-      return {
-        subject: `Nice work! You earned ${data.xp} XP`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #ededed; background: #0a0a0a;">
-            <h1 style="color: #22c55e; font-size: 24px;">Phase Complete!</h1>
-            <p style="color: #9ca3af; line-height: 1.6;">Awesome work, ${name}! You completed the ${data.phase} phase and earned ${data.xp} XP.</p>
-            <p style="color: #9ca3af; line-height: 1.6;">Head to your dashboard to see what's next.</p>
-            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #22c55e; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">View Dashboard</a>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #333;">
+            <p style="font-size: 16px; line-height: 1.6;">hey ${name},</p>
+            <p style="font-size: 16px; line-height: 1.6;">you had a ${data.streak}-day streak going. it's been a couple days since you posted.</p>
+            <p style="font-size: 16px; line-height: 1.6;">no pressure, just wanted to give you a heads up before it resets.</p>
+            <a href="${APP_URL}/gymdex/dashboard" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">go to dashboard</a>
+            <p style="font-size: 16px; line-height: 1.6; margin-top: 24px;">- luke</p>
           </div>
         `,
       };
 
     default:
       return {
-        subject: "Update from Gymdex",
-        html: `<p>You have an update on your Gymdex dashboard.</p>`,
+        subject: "quick update",
+        html: `<p>hey, you've got an update on your dashboard.</p>`,
       };
   }
 }

@@ -15,7 +15,7 @@ export default function PitchSection() {
       {/* Hero */}
       <section className="text-center pt-8">
         <h1 className="text-4xl font-bold text-foreground leading-tight">
-          Get paid <span className="text-primary-light">$250+/mo</span> to post
+          Get paid <span className="text-primary-light">$250+</span> to post
           videos from your phone
         </h1>
         <p className="mt-4 text-lg text-muted max-w-md mx-auto">
@@ -129,7 +129,7 @@ export default function PitchSection() {
         <div className="p-5 rounded-xl border border-border bg-surface space-y-3">
           {[
             "Paid on the 1st of every month",
-            "PayPal, Venmo, or Sideshift",
+            "Paid via Sideshift",
             "No minimum threshold",
           ].map((text) => (
             <div key={text} className="flex items-center gap-3">

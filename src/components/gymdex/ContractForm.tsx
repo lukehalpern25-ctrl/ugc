@@ -9,14 +9,13 @@ export default function ContractForm() {
   const router = useRouter();
   const { track } = useAnalytics();
   const [legalName, setLegalName] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("sideshift");
   const [paymentHandle, setPaymentHandle] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const canSign =
     legalName.trim().length >= 2 &&
-    paymentMethod !== "" &&
     paymentHandle.trim().length >= 3 &&
     !loading;
 
@@ -69,63 +68,21 @@ export default function ContractForm() {
         />
       </div>
 
-      {/* Payment method */}
+      {/* Sideshift username */}
       <div className="mt-4">
         <label className="block text-sm font-medium text-foreground mb-2">
-          Payment method
-        </label>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { value: "paypal", label: "PayPal" },
-            { value: "venmo", label: "Venmo" },
-            { value: "sideshift", label: "Crypto" },
-          ].map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => {
-                setPaymentMethod(opt.value);
-                setPaymentHandle("");
-              }}
-              className={`px-3 py-3 rounded-lg border text-sm font-medium transition-all ${
-                paymentMethod === opt.value
-                  ? "border-primary bg-primary/10 text-primary-light"
-                  : "border-border bg-surface text-muted hover:border-primary/50"
-              }`}
-              disabled={loading}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Payment handle */}
-      <div className="mt-4">
-        <label className="block text-sm font-medium text-foreground mb-2">
-          {paymentMethod === "paypal"
-            ? "PayPal email"
-            : paymentMethod === "venmo"
-            ? "Venmo username"
-            : paymentMethod === "sideshift"
-            ? "Sideshift address"
-            : "Payment handle"}
+          Sideshift username
         </label>
         <input
-          type={paymentMethod === "paypal" ? "email" : "text"}
+          type="text"
           value={paymentHandle}
-          onChange={(e) => setPaymentHandle(e.target.value)}
-          placeholder={
-            paymentMethod === "paypal"
-              ? "you@email.com"
-              : paymentMethod === "venmo"
-              ? "@yourvenmo"
-              : paymentMethod === "sideshift"
-              ? "Your sideshift address"
-              : "Select a payment method above"
-          }
+          onChange={(e) => {
+            setPaymentMethod("sideshift");
+            setPaymentHandle(e.target.value);
+          }}
+          placeholder="@yourusername"
           className="w-full px-4 py-3 rounded-lg bg-surface border border-border text-foreground placeholder:text-muted/50 focus:outline-none focus:border-primary transition-colors"
-          disabled={loading || !paymentMethod}
+          disabled={loading}
           onKeyDown={(e) => e.key === "Enter" && handleSign()}
         />
       </div>

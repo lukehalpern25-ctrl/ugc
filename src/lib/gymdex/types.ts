@@ -1,7 +1,7 @@
 // ─── Database Row Types ──────────────────────────────────────────────
 
 export type Phase = 'setup' | 'warmup' | 'posting' | 'active';
-export type PaymentMethod = 'paypal' | 'venmo' | 'sideshift';
+export type PaymentMethod = 'sideshift';
 export type Platform = 'tiktok' | 'instagram';
 export type PerformanceTier = 'standard' | 'rising' | 'top_performer' | 'elite';
 export type EarningsStatus = 'pending' | 'paid';
