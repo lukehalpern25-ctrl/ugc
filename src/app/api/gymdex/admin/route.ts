@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-export async function GET(request: NextRequest) {
-  // Simple password protection via query param
+function checkAuth(request: NextRequest): boolean {
   const password = request.nextUrl.searchParams.get("key");
   const adminKey = process.env.ADMIN_KEY || "gymdex-admin";
+  return password === adminKey;
+}
 
-  if (password !== adminKey) {
+export async function GET(request: NextRequest) {
+  if (!checkAuth(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if requesting a specific creator
+  const creatorId = request.nextUrl.searchParams.get("creatorId");
+  if (creatorId) {
+    return getCreatorDetails(creatorId);
   }
 
   const now = new Date();
@@ -194,4 +202,64 @@ export async function GET(request: NextRequest) {
     creators: recentCreatorsRes.data || [],
     chart,
   });
+}
+
+async function getCreatorDetails(creatorId: string) {
+  const [
+    profileRes,
+    progressRes,
+    warmupTasksRes,
+    postsRes,
+    badgesRes,
+    earningsRes,
+    xpEventsRes,
+    notificationsRes,
+  ] = await Promise.all([
+    supabase.from("creator_profiles").select("*").eq("id", creatorId).single(),
+    supabase.from("creator_progress").select("*").eq("creator_id", creatorId).order("completed_at", { ascending: false }),
+    supabase.from("warmup_daily_tasks").select("*").eq("creator_id", creatorId).order("day_number"),
+    supabase.from("creator_posts").select("*").eq("creator_id", creatorId).order("posted_at", { ascending: false }),
+    supabase.from("creator_badges").select("*").eq("creator_id", creatorId).order("earned_at", { ascending: false }),
+    supabase.from("creator_earnings").select("*").eq("creator_id", creatorId).order("month", { ascending: false }),
+    supabase.from("xp_events").select("*").eq("creator_id", creatorId).order("created_at", { ascending: false }).limit(50),
+    supabase.from("notifications_sent").select("*").eq("creator_id", creatorId).order("sent_at", { ascending: false }).limit(20),
+  ]);
+
+  if (profileRes.error || !profileRes.data) {
+    return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    profile: profileRes.data,
+    progress: progressRes.data || [],
+    warmupTasks: warmupTasksRes.data || [],
+    posts: postsRes.data || [],
+    badges: badgesRes.data || [],
+    earnings: earningsRes.data || [],
+    xpEvents: xpEventsRes.data || [],
+    notifications: notificationsRes.data || [],
+  });
+}
+
+export async function DELETE(request: NextRequest) {
+  if (!checkAuth(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const creatorId = request.nextUrl.searchParams.get("creatorId");
+  if (!creatorId) {
+    return NextResponse.json({ error: "Missing creatorId" }, { status: 400 });
+  }
+
+  // Delete creator (cascade will handle related records)
+  const { error } = await supabase
+    .from("creator_profiles")
+    .delete()
+    .eq("id", creatorId);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
 }
