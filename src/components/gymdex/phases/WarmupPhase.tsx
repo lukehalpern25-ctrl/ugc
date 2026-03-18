@@ -6,6 +6,8 @@ import type { CreatorProfile, WarmupDailyTask } from "@/lib/gymdex/types";
 import WarmupDayCard from "./WarmupDayCard";
 import TimeGate from "../TimeGate";
 
+const DAY_PAYMENTS = [5, 7, 10] as const;
+
 interface WarmupPhaseProps {
   creatorId: string;
   profile: CreatorProfile;
@@ -62,6 +64,12 @@ export default function WarmupPhase({
     }, 500);
   };
 
+  const earnedSoFar = dayCompletions.reduce(
+    (sum, completed, i) => sum + (completed ? DAY_PAYMENTS[i] : 0),
+    0
+  );
+  const totalPossible = DAY_PAYMENTS.reduce((a, b) => a + b, 0);
+
   return (
     <div className="space-y-4">
       <div className="mb-4">
@@ -70,6 +78,20 @@ export default function WarmupPhase({
           3 days to warm up your accounts before posting. Each day unlocks 24
           hours after the previous one.
         </p>
+      </div>
+
+      {/* Earnings banner */}
+      <div className="rounded-xl border border-success/30 bg-success/5 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-success font-medium uppercase tracking-wide">Onboarding Bonus</p>
+            <p className="text-2xl font-bold text-success">${earnedSoFar} <span className="text-sm font-normal text-muted">/ ${totalPossible}</span></p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-muted">Cash out after</p>
+            <p className="text-sm font-medium text-foreground">3rd post in app</p>
+          </div>
+        </div>
       </div>
 
       {/* Time gate countdown */}
@@ -81,7 +103,7 @@ export default function WarmupPhase({
       )}
 
       {/* Day cards */}
-      {warmupDays.map((dayDef) => (
+      {warmupDays.map((dayDef, index) => (
         <WarmupDayCard
           key={dayDef.day}
           dayDef={dayDef}
@@ -90,6 +112,7 @@ export default function WarmupPhase({
           isCompleted={dayCompletions[dayDef.day - 1]}
           creatorId={creatorId}
           onTaskComplete={handleTaskComplete}
+          payment={DAY_PAYMENTS[index]}
         />
       ))}
     </div>

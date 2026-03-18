@@ -25,25 +25,15 @@ export default function ContractForm() {
     setError("");
 
     try {
-      const res = await fetch("/api/gymdex/contract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          legal_name: legalName.trim(),
-          payment_method: paymentMethod,
-          payment_handle: paymentHandle.trim(),
-        }),
-      });
+      // Store contract data in sessionStorage for the create-account page
+      sessionStorage.setItem("gymdex-contract-data", JSON.stringify({
+        legal_name: legalName.trim(),
+        payment_method: paymentMethod,
+        payment_handle: paymentHandle.trim(),
+      }));
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to sign contract");
-      }
-
-      const { id } = await res.json();
-      localStorage.setItem("gymdex-creator-id", id);
-      track("contract_signed", { creator_id: id });
-      router.push("/gymdex/dashboard");
+      track("contract_reviewed");
+      router.push("/gymdex/create-account");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);

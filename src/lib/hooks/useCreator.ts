@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { DashboardData } from "@/lib/gymdex/types";
 
 export function useCreator() {
@@ -8,6 +8,7 @@ export function useCreator() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initializedRef = useRef(false);
 
   // Load creator ID from localStorage or recovery param
   useEffect(() => {
@@ -24,13 +25,16 @@ export function useCreator() {
     } else {
       const id = localStorage.getItem("gymdex-creator-id");
       setCreatorId(id);
+      if (!id) {
+        setLoading(false);
+      }
     }
+    initializedRef.current = true;
   }, []);
 
   // Fetch dashboard data
   const fetchData = useCallback(async () => {
     if (!creatorId) {
-      setLoading(false);
       return;
     }
 
@@ -58,9 +62,12 @@ export function useCreator() {
     }
   }, [creatorId]);
 
+  // Fetch data when creatorId changes
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (creatorId) {
+      fetchData();
+    }
+  }, [creatorId, fetchData]);
 
   return {
     creatorId,

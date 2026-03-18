@@ -17,6 +17,28 @@ export async function PATCH(
     }
   }
 
+  // Validate TikTok URL
+  if (updates.tiktok_url) {
+    const tiktokRegex = /^https?:\/\/(www\.)?tiktok\.com\/@[\w.]+\/?$/i;
+    if (!tiktokRegex.test(updates.tiktok_url)) {
+      return NextResponse.json(
+        { error: "Please enter a valid TikTok profile URL (e.g. https://tiktok.com/@username)" },
+        { status: 400 }
+      );
+    }
+  }
+
+  // Validate Instagram URL
+  if (updates.instagram_url) {
+    const instagramRegex = /^https?:\/\/(www\.)?instagram\.com\/[\w.]+\/?$/i;
+    if (!instagramRegex.test(updates.instagram_url)) {
+      return NextResponse.json(
+        { error: "Please enter a valid Instagram profile URL (e.g. https://instagram.com/username)" },
+        { status: 400 }
+      );
+    }
+  }
+
   // Auto-extract username from URL
   if (updates.tiktok_url && !updates.tiktok_username) {
     const match = updates.tiktok_url.match(/@([^/?]+)/);

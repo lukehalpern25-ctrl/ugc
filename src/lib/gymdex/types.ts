@@ -8,6 +8,7 @@ export type EarningsStatus = 'pending' | 'paid';
 
 export interface CreatorProfile {
   id: string;
+  auth_id: string | null;
   legal_name: string;
   contract_signed_at: string;
   contract_ip_address: string | null;

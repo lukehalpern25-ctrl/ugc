@@ -234,7 +234,7 @@ export async function checkPhaseAdvancement(
 async function isSetupComplete(creatorId: string): Promise<boolean> {
   const { data: profile } = await supabase
     .from("creator_profiles")
-    .select("email, payment_method, payment_handle, tiktok_url, instagram_url")
+    .select("email, phone, payment_method, payment_handle, tiktok_url, instagram_url")
     .eq("id", creatorId)
     .single();
 
@@ -250,6 +250,7 @@ async function isSetupComplete(creatorId: string): Promise<boolean> {
 
   return !!(
     profile.email &&
+    profile.phone &&
     profile.payment_method &&
     profile.payment_handle &&
     profile.tiktok_url &&

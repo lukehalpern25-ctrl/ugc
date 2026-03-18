@@ -2,12 +2,12 @@
 
 import { PHASE_ORDER } from "@/lib/gymdex/phases";
 import type { Phase } from "@/lib/gymdex/types";
-import { Settings, Flame, Clapperboard, BarChart3 } from "lucide-react";
+import { Settings, Flame, Download, BarChart3 } from "lucide-react";
 
 const PHASE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   setup: Settings,
   warmup: Flame,
-  posting: Clapperboard,
+  posting: Download,
   active: BarChart3,
 };
 

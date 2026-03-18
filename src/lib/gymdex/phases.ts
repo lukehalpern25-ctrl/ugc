@@ -40,10 +40,11 @@ export const setupPhase: PhaseDef = {
     },
     {
       id: "setup-phone",
-      title: "Phone Number (optional)",
+      title: "Phone Number",
       description: "So we can reach you if needed.",
       type: "input",
       field: "phone",
+      required: true,
       placeholder: "(555) 555-5555",
     },
     {
@@ -190,6 +191,6 @@ export const warmupDays: WarmupDayDef[] = [
 export const PHASE_ORDER: { id: string; label: string; icon: string }[] = [
   { id: "setup", label: "Setup", icon: "settings" },
   { id: "warmup", label: "Warm-up", icon: "flame" },
-  { id: "posting", label: "Posting", icon: "clapperboard" },
+  { id: "posting", label: "Download", icon: "download" },
   { id: "active", label: "Active", icon: "bar-chart" },
 ];

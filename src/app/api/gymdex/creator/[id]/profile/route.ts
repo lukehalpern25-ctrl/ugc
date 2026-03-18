@@ -9,7 +9,7 @@ export async function PATCH(
   const { id } = await params;
   const body = await request.json();
 
-  const allowedFields = ["email", "phone", "payment_method", "payment_handle"];
+  const allowedFields = ["email", "phone", "payment_method", "payment_handle", "current_phase"];
   const updates: Record<string, string> = {};
 
   for (const field of allowedFields) {
@@ -33,9 +33,22 @@ export async function PATCH(
     }
   }
 
+  // Validate phone number format
+  if (updates.phone) {
+    const digits = updates.phone.replace(/\D/g, "");
+    if (digits.length < 10 || digits.length > 15) {
+      return NextResponse.json({ error: "Please enter a valid phone number" }, { status: 400 });
+    }
+  }
+
   // Validate payment method
   if (updates.payment_method && !["paypal", "venmo", "sideshift"].includes(updates.payment_method)) {
     return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
+  }
+
+  // Validate current_phase
+  if (updates.current_phase && !["setup", "warmup", "posting", "active"].includes(updates.current_phase)) {
+    return NextResponse.json({ error: "Invalid phase" }, { status: 400 });
   }
 
   const { error } = await supabase

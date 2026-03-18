@@ -69,7 +69,6 @@ interface CreatorDetails {
   };
   progress: { id: string; phase: string; step_id: string; completed_at: string }[];
   warmupTasks: { id: string; day_number: number; task_id: string; completed_at: string }[];
-  posts: { id: string; platform: string; post_url: string | null; posted_at: string }[];
   badges: { id: string; badge_id: string; earned_at: string }[];
   earnings: { id: string; month: string; base_amount: number; bonus_amount: number; status: string }[];
   xpEvents: { id: string; amount: number; reason: string; created_at: string }[];
@@ -509,26 +508,6 @@ export default function AdminPage() {
                       <InfoRow label="Day 3 Completed" value={creatorDetails.profile.warmup_day3_completed_at ? new Date(creatorDetails.profile.warmup_day3_completed_at).toLocaleString() : null} />
                     </div>
                   </div>
-
-                  {/* Posts */}
-                  {creatorDetails.posts.length > 0 && (
-                    <div className="rounded-xl border border-border bg-surface-light p-4">
-                      <h3 className="font-bold text-foreground mb-3">Posts ({creatorDetails.posts.length})</h3>
-                      <div className="space-y-2 max-h-40 overflow-y-auto">
-                        {creatorDetails.posts.map((post) => (
-                          <div key={post.id} className="flex items-center justify-between text-sm py-1 border-b border-border/50 last:border-0">
-                            <span className="text-muted capitalize">{post.platform}</span>
-                            <span className="text-muted">{new Date(post.posted_at).toLocaleDateString()}</span>
-                            {post.post_url && (
-                              <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-primary-light hover:text-primary text-xs underline">
-                                View
-                              </a>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Badges */}
                   {creatorDetails.badges.length > 0 && (

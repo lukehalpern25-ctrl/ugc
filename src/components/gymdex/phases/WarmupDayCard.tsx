@@ -10,6 +10,7 @@ interface WarmupDayCardProps {
   isCompleted: boolean;
   creatorId: string;
   onTaskComplete: () => void;
+  payment: number;
 }
 
 export default function WarmupDayCard({
@@ -19,6 +20,7 @@ export default function WarmupDayCard({
   isCompleted,
   creatorId,
   onTaskComplete,
+  payment,
 }: WarmupDayCardProps) {
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -87,9 +89,14 @@ export default function WarmupDayCard({
               <p className="text-xs text-muted">{dayDef.subtitle}</p>
             </div>
           </div>
-          <span className="text-xs text-muted">
-            {dayDef.tasks.filter((t) => completedTasks.has(t.id)).length}/{dayDef.tasks.length}
-          </span>
+          <div className="text-right">
+            <span className={`text-sm font-bold ${isCompleted ? "text-success" : "text-foreground"}`}>
+              +${payment}
+            </span>
+            <span className="block text-xs text-muted">
+              {dayDef.tasks.filter((t) => completedTasks.has(t.id)).length}/{dayDef.tasks.length} tasks
+            </span>
+          </div>
         </div>
 
         {/* Tasks */}

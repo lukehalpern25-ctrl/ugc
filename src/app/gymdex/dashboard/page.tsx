@@ -14,7 +14,7 @@ import PerformanceTier from "@/components/gymdex/PerformanceTier";
 import ConfettiOverlay from "@/components/gymdex/ConfettiOverlay";
 import SetupPhase from "@/components/gymdex/phases/SetupPhase";
 import WarmupPhase from "@/components/gymdex/phases/WarmupPhase";
-import PostingPhase from "@/components/gymdex/phases/PostingPhase";
+import DownloadPhase from "@/components/gymdex/phases/DownloadPhase";
 import ActivePhase from "@/components/gymdex/phases/ActivePhase";
 
 export default function DashboardPage() {
@@ -67,7 +67,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { profile, progress, warmupTasks, posts, badges, earnings } = data;
+  const { profile, progress, warmupTasks, badges, earnings } = data;
 
   const handlePhaseComplete = () => {
     setShowConfetti(true);
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         );
       case "posting":
         return (
-          <PostingPhase
+          <DownloadPhase
             creatorId={profile.id}
             progress={progress}
             onComplete={handlePhaseComplete}
@@ -108,15 +108,7 @@ export default function DashboardPage() {
           />
         );
       case "active":
-        return (
-          <ActivePhase
-            creatorId={profile.id}
-            profile={profile}
-            posts={posts}
-            earnings={earnings}
-            onRefetch={refetch}
-          />
-        );
+        return <ActivePhase />;
     }
   };
 
