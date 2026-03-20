@@ -31,6 +31,7 @@ export default function InlineVideo({
   const [isWaiting, setIsWaiting] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function InlineVideo({
   const handleTimeUpdateInternal = useCallback(
     (e: React.SyntheticEvent<HTMLVideoElement>) => {
       const el = e.currentTarget;
+      setCurrentTime(el.currentTime);
       setProgress(el.duration ? el.currentTime / el.duration : 0);
       onTimeUpdate?.(e);
     },
@@ -132,8 +134,6 @@ export default function InlineVideo({
     const s = Math.floor(seconds % 60);
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
-
-  const currentTime = videoRef.current?.currentTime ?? 0;
 
   return (
     <div

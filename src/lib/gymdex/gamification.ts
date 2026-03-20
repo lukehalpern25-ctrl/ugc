@@ -6,7 +6,6 @@ import {
   POST_MILESTONES,
   DAILY_POST_QUOTA,
 } from "./constants";
-import type { CreatorProfile } from "./types";
 
 // ─── Award XP ────────────────────────────────────────────────────────
 

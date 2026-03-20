@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import InlineVideo from "@/components/InlineVideo";
 
 const STORAGE_URL =
@@ -69,10 +70,12 @@ export default function PitchSection() {
       {/* Testimonial */}
       <section className="rounded-xl border border-border bg-surface p-6">
         <div className="flex items-start gap-4">
-          <img
+          <Image
             src="/images/testimonial-avatar.png"
             alt="Samantha"
-            className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+            width={48}
+            height={48}
+            className="rounded-full object-cover flex-shrink-0"
           />
           <div>
             <p className="text-foreground leading-relaxed">

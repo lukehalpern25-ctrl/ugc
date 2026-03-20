@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { WarmupDayDef } from "@/lib/gymdex/phases";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 
 interface WarmupDayCardProps {
   dayDef: WarmupDayDef;
@@ -22,6 +23,7 @@ export default function WarmupDayCard({
   onTaskComplete,
   payment,
 }: WarmupDayCardProps) {
+  const { track } = useAnalytics();
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState("");
 
@@ -41,6 +43,7 @@ export default function WarmupDayCard({
         throw new Error(data.error || "Failed to save");
       }
 
+      track("warmup_task_completed", { day: dayDef.day, task_id: taskId });
       onTaskComplete();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
@@ -48,10 +51,6 @@ export default function WarmupDayCard({
       setSaving(null);
     }
   };
-
-  const allRequiredComplete = dayDef.tasks
-    .filter((t) => t.id !== "d3-post")
-    .every((t) => completedTasks.has(t.id));
 
   return (
     <div

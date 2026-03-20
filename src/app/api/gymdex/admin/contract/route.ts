@@ -4,10 +4,17 @@ import { CONTRACT_TEXT, CONTRACT_VERSION } from "@/lib/gymdex/contract";
 import { jsPDF } from "jspdf";
 
 export async function GET(request: NextRequest) {
-  const password = request.nextUrl.searchParams.get("key");
-  const adminKey = process.env.ADMIN_KEY || "gymdex-admin";
-
-  if (password !== adminKey) {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const token = authHeader.slice(7);
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey) {
+    console.error("[Admin] ADMIN_KEY environment variable is not set");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+  if (token !== adminKey) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

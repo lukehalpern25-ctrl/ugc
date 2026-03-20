@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
 function checkAuth(request: NextRequest): boolean {
-  const password = request.nextUrl.searchParams.get("key");
-  const adminKey = process.env.ADMIN_KEY || "gymdex-admin";
-  return password === adminKey;
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return false;
+  }
+  const token = authHeader.slice(7);
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey) {
+    console.error("[Admin] ADMIN_KEY environment variable is not set");
+    return false;
+  }
+  return token === adminKey;
 }
 
 export async function GET(request: NextRequest) {
@@ -19,7 +27,6 @@ export async function GET(request: NextRequest) {
   }
 
   const now = new Date();
-  const today = now.toISOString().split("T")[0];
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -31,6 +38,8 @@ export async function GET(request: NextRequest) {
     pitchViews7dRes,
     contractSignsTotalRes,
     contractSigns7dRes,
+    contractStartedTotalRes,
+    contractStarted7dRes,
     dashboardViewsRes,
     phaseCompletionsRes,
     recentCreatorsRes,
@@ -53,35 +62,46 @@ export async function GET(request: NextRequest) {
     supabase
       .from("analytics_events")
       .select("*", { count: "exact", head: true })
-      .eq("event_type", "page_view")
+      .eq("event_type", "page_viewed")
       .contains("event_data", { page: "/gymdex" }),
 
     // Pitch views last 7 days
     supabase
       .from("analytics_events")
       .select("*", { count: "exact", head: true })
-      .eq("event_type", "page_view")
+      .eq("event_type", "page_viewed")
       .contains("event_data", { page: "/gymdex" })
       .gte("created_at", sevenDaysAgo),
 
-    // Total contract signs
+    // Total contract signs (use creator_profiles as source of truth)
     supabase
-      .from("analytics_events")
-      .select("*", { count: "exact", head: true })
-      .eq("event_type", "contract_signed"),
+      .from("creator_profiles")
+      .select("*", { count: "exact", head: true }),
 
-    // Contract signs last 7 days
+    // Contract signs last 7 days (creators who signed up in last 7 days)
+    supabase
+      .from("creator_profiles")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", sevenDaysAgo),
+
+    // Contract started (clicked "Sign & get started" but may not have finished)
     supabase
       .from("analytics_events")
       .select("*", { count: "exact", head: true })
-      .eq("event_type", "contract_signed")
+      .eq("event_type", "contract_reviewed"),
+
+    // Contract started last 7 days
+    supabase
+      .from("analytics_events")
+      .select("*", { count: "exact", head: true })
+      .eq("event_type", "contract_reviewed")
       .gte("created_at", sevenDaysAgo),
 
     // Dashboard views by phase
     supabase
       .from("analytics_events")
       .select("event_data")
-      .eq("event_type", "dashboard_view"),
+      .eq("event_type", "dashboard_viewed"),
 
     // Phase completions
     supabase
@@ -99,7 +119,7 @@ export async function GET(request: NextRequest) {
     supabase
       .from("analytics_events")
       .select("created_at")
-      .eq("event_type", "page_view")
+      .eq("event_type", "page_viewed")
       .contains("event_data", { page: "/gymdex" })
       .gte("created_at", thirtyDaysAgo),
 
@@ -113,14 +133,14 @@ export async function GET(request: NextRequest) {
     supabase
       .from("analytics_events")
       .select("visitor_id")
-      .eq("event_type", "page_view")
+      .eq("event_type", "page_viewed")
       .contains("event_data", { page: "/gymdex" }),
 
     // Unique visitors 7d
     supabase
       .from("analytics_events")
       .select("visitor_id")
-      .eq("event_type", "page_view")
+      .eq("event_type", "page_viewed")
       .contains("event_data", { page: "/gymdex" })
       .gte("created_at", sevenDaysAgo),
   ]);
@@ -173,18 +193,23 @@ export async function GET(request: NextRequest) {
   const uniqueTotal = new Set((uniqueVisitorsTotalRes.data || []).map((r: { visitor_id: string }) => r.visitor_id).filter(Boolean)).size;
   const unique7d = new Set((uniqueVisitors7dRes.data || []).map((r: { visitor_id: string }) => r.visitor_id).filter(Boolean)).size;
 
-  // Conversion rate
+  // Conversion rate (based on unique visitors, not total page views)
   const pitchViewsTotal = pitchViewsTotalRes.count || 0;
   const contractSignsTotal = contractSignsTotalRes.count || 0;
-  const conversionRate = pitchViewsTotal > 0
-    ? ((contractSignsTotal / pitchViewsTotal) * 100).toFixed(1)
+  const conversionRate = uniqueTotal > 0
+    ? ((contractSignsTotal / uniqueTotal) * 100).toFixed(1)
     : "0";
+
+  const contractStartedTotal = contractStartedTotalRes.count || 0;
+  const contractStarted7d = contractStarted7dRes.count || 0;
 
   return NextResponse.json({
     overview: {
       totalCreators: totalCreatorsRes.count || 0,
       pitchViewsTotal,
       pitchViews7d: pitchViews7dRes.count || 0,
+      contractStartedTotal,
+      contractStarted7d,
       contractSignsTotal,
       contractSigns7d: contractSigns7dRes.count || 0,
       conversionRate: Number(conversionRate),
@@ -193,6 +218,7 @@ export async function GET(request: NextRequest) {
     },
     funnel: {
       pitchViews: pitchViewsTotal,
+      contractStarted: contractStartedTotal,
       contractSigned: contractSignsTotal,
       ...phaseCounts,
     },

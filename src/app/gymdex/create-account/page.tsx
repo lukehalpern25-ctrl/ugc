@@ -13,7 +13,7 @@ interface ContractData {
 
 export default function CreateAccountPage() {
   const router = useRouter();
-  const { track, trackPageView } = useAnalytics();
+  const { trackPageView } = useAnalytics();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -91,7 +91,25 @@ export default function CreateAccountPage() {
       // Store creator ID
       localStorage.setItem("gymdex-creator-id", id);
 
-      track("account_created", { creator_id: id });
+      // Use sendBeacon to ensure events are sent even during navigation
+      const trackEvent = (eventType: string) => {
+        fetch("/api/gymdex/analytics", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event_type: eventType,
+            event_data: { creator_id: id },
+            visitor_id: localStorage.getItem("gymdex-visitor-id"),
+            creator_id: id,
+            page: window.location.pathname,
+          }),
+          keepalive: true,
+        }).catch(() => {});
+      };
+
+      trackEvent("contract_signed");
+      trackEvent("account_created");
+
       router.push("/gymdex/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

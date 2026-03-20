@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { warmupDays } from "@/lib/gymdex/phases";
 import { WARMUP_UNLOCK_HOURS } from "@/lib/gymdex/constants";
 import type { CreatorProfile, WarmupDailyTask } from "@/lib/gymdex/types";
@@ -20,9 +21,9 @@ export default function WarmupPhase({
   creatorId,
   profile,
   warmupTasks,
-  onComplete,
   onRefetch,
 }: WarmupPhaseProps) {
+  const [now] = useState(() => Date.now());
   const warmupStart = profile.warmup_started_at
     ? new Date(profile.warmup_started_at)
     : new Date();
@@ -47,7 +48,7 @@ export default function WarmupPhase({
   };
 
   const isDayUnlocked = (day: number) => {
-    return Date.now() >= getUnlockTime(day).getTime();
+    return now >= getUnlockTime(day).getTime();
   };
 
   // Find next locked day for countdown

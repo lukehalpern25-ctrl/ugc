@@ -9,7 +9,6 @@ interface SectionBlockProps {
   completedItems: Set<string>;
   watchedVideos: Set<string>;
   activeSectionId: number;
-  allPreviousSectionsComplete: boolean;
   onToggle: (id: string) => void;
   onVideoWatched: (id: string) => void;
 }
@@ -19,7 +18,6 @@ export default function SectionBlock({
   completedItems,
   watchedVideos,
   activeSectionId,
-  allPreviousSectionsComplete,
   onToggle,
   onVideoWatched,
 }: SectionBlockProps) {

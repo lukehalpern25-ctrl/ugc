@@ -31,11 +31,13 @@ export default function DashboardPage() {
     }
   }, [loading, creatorId, router]);
 
-  // Track dashboard view and current phase
+  // Track dashboard view only once per phase (not on refetch)
+  const hasTrackedInitialView = useRef(false);
   useEffect(() => {
-    if (data && trackedPhaseRef.current !== data.profile.current_phase) {
+    if (data && !hasTrackedInitialView.current) {
+      hasTrackedInitialView.current = true;
       trackedPhaseRef.current = data.profile.current_phase;
-      track("dashboard_view", { phase: data.profile.current_phase });
+      track("dashboard_viewed", { phase: data.profile.current_phase });
     }
   }, [data, track]);
 
@@ -71,7 +73,10 @@ export default function DashboardPage() {
 
   const handlePhaseComplete = () => {
     setShowConfetti(true);
-    track("phase_completed", { phase: profile.current_phase });
+    const completedPhase = profile.current_phase;
+    track("phase_completed", { phase: completedPhase });
+    // Reset tracking ref so we track the new phase view after refetch
+    hasTrackedInitialView.current = false;
     setTimeout(() => setShowConfetti(false), 4000);
     refetch();
   };

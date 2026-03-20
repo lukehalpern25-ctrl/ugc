@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Trash2 } from "lucide-react";
 
 interface AdminData {
   overview: {
     totalCreators: number;
     pitchViewsTotal: number;
     pitchViews7d: number;
+    contractStartedTotal: number;
+    contractStarted7d: number;
     contractSignsTotal: number;
     contractSigns7d: number;
     conversionRate: number;
@@ -15,6 +18,7 @@ interface AdminData {
   };
   funnel: {
     pitchViews: number;
+    contractStarted: number;
     contractSigned: number;
     setup: number;
     warmup: number;
@@ -87,13 +91,18 @@ export default function AdminPage() {
   const [creatorDetails, setCreatorDetails] = useState<CreatorDetails | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleteTargetName, setDeleteTargetName] = useState<string>("");
   const [deleting, setDeleting] = useState(false);
+  const [chartRange, setChartRange] = useState<1 | 3 | 7 | 30>(30);
 
   const fetchData = useCallback(async (adminKey: string) => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/gymdex/admin?key=${encodeURIComponent(adminKey)}`);
+      const res = await fetch("/api/gymdex/admin", {
+        headers: { Authorization: `Bearer ${adminKey}` },
+      });
       if (!res.ok) {
         if (res.status === 401) throw new Error("Invalid key");
         throw new Error("Failed to fetch");
@@ -123,7 +132,9 @@ export default function AdminPage() {
     setSelectedCreatorId(creatorId);
     setCreatorDetails(null);
     try {
-      const res = await fetch(`/api/gymdex/admin?key=${encodeURIComponent(key)}&creatorId=${creatorId}`);
+      const res = await fetch(`/api/gymdex/admin?creatorId=${creatorId}`, {
+        headers: { Authorization: `Bearer ${key}` },
+      });
       if (!res.ok) throw new Error("Failed to fetch creator details");
       const json = await res.json();
       setCreatorDetails(json);
@@ -135,32 +146,56 @@ export default function AdminPage() {
   }, [key]);
 
   const downloadContract = useCallback(async (creatorId: string) => {
-    window.open(`/api/gymdex/admin/contract?key=${encodeURIComponent(key)}&creatorId=${creatorId}`, "_blank");
+    try {
+      const res = await fetch(`/api/gymdex/admin/contract?creatorId=${creatorId}`, {
+        headers: { Authorization: `Bearer ${key}` },
+      });
+      if (!res.ok) throw new Error("Failed to download contract");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `contract-${creatorId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
   }, [key]);
 
   const deleteCreator = useCallback(async () => {
-    if (!selectedCreatorId) return;
+    if (!deleteTargetId) return;
     setDeleting(true);
     try {
-      const res = await fetch(`/api/gymdex/admin?key=${encodeURIComponent(key)}&creatorId=${selectedCreatorId}`, {
+      const res = await fetch(`/api/gymdex/admin?creatorId=${deleteTargetId}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${key}` },
       });
       if (!res.ok) throw new Error("Failed to delete");
       setShowDeleteConfirm(false);
-      setSelectedCreatorId(null);
-      setCreatorDetails(null);
+      setDeleteTargetId(null);
+      setDeleteTargetName("");
+      // Close modal if we deleted the currently viewed creator
+      if (selectedCreatorId === deleteTargetId) {
+        setSelectedCreatorId(null);
+        setCreatorDetails(null);
+      }
       fetchData(key);
     } catch (err) {
       console.error(err);
     } finally {
       setDeleting(false);
     }
-  }, [key, selectedCreatorId, fetchData]);
+  }, [key, deleteTargetId, selectedCreatorId, fetchData]);
 
   const closeModal = useCallback(() => {
     setSelectedCreatorId(null);
     setCreatorDetails(null);
     setShowDeleteConfirm(false);
+    setDeleteTargetId(null);
+    setDeleteTargetName("");
   }, []);
 
   if (!authed) {
@@ -196,7 +231,8 @@ export default function AdminPage() {
   // Funnel steps
   const funnelSteps = [
     { label: "Pitch Page Views", count: funnel.pitchViews, color: "bg-blue-500" },
-    { label: "Contract Signed", count: funnel.contractSigned, color: "bg-purple-500" },
+    { label: "Contract Started", count: funnel.contractStarted, color: "bg-indigo-500" },
+    { label: "Account Created", count: funnel.contractSigned, color: "bg-purple-500" },
     { label: "In Setup", count: phaseCounts.setup, color: "bg-yellow-500" },
     { label: "In Warm-up", count: phaseCounts.warmup, color: "bg-orange-500" },
     { label: "In Posting Guide", count: phaseCounts.posting, color: "bg-pink-500" },
@@ -205,8 +241,9 @@ export default function AdminPage() {
 
   const maxFunnel = Math.max(...funnelSteps.map((s) => s.count), 1);
 
-  // Chart max
-  const chartMax = Math.max(...chart.map((d) => Math.max(d.views, d.signups)), 1);
+  // Filter chart by selected range
+  const filteredChart = chart.slice(-chartRange);
+  const chartMax = Math.max(...filteredChart.map((d) => Math.max(d.views, d.signups)), 1);
 
   return (
     <div className="min-h-screen bg-background">
@@ -274,9 +311,28 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 30-Day Chart */}
+        {/* Chart */}
         <div className="rounded-xl border border-border bg-surface p-5">
-          <h2 className="text-base font-bold text-foreground mb-4">Last 30 Days</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-foreground">
+              {chartRange === 1 ? "Last 24 Hours" : `Last ${chartRange} Days`}
+            </h2>
+            <div className="flex gap-1">
+              {([1, 3, 7, 30] as const).map((range) => (
+                <button
+                  key={range}
+                  onClick={() => setChartRange(range)}
+                  className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                    chartRange === range
+                      ? "bg-primary text-white"
+                      : "text-muted hover:bg-surface-light"
+                  }`}
+                >
+                  {range === 1 ? "24h" : `${range}d`}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="flex items-center gap-4 mb-3 text-xs text-muted">
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-blue-500" />
@@ -288,7 +344,7 @@ export default function AdminPage() {
             </div>
           </div>
           <div className="flex items-end gap-[2px] h-32">
-            {chart.map((day) => (
+            {filteredChart.map((day) => (
               <div key={day.date} className="flex-1 flex flex-col items-center justify-end gap-[1px] h-full" title={`${day.date}: ${day.views} views, ${day.signups} signups`}>
                 <div
                   className="w-full bg-blue-500/60 rounded-t-sm min-h-[1px]"
@@ -302,9 +358,9 @@ export default function AdminPage() {
             ))}
           </div>
           <div className="flex justify-between mt-2 text-[10px] text-muted">
-            <span>{chart[0]?.date.slice(5)}</span>
-            <span>{chart[Math.floor(chart.length / 2)]?.date.slice(5)}</span>
-            <span>{chart[chart.length - 1]?.date.slice(5)}</span>
+            <span>{filteredChart[0]?.date.slice(5)}</span>
+            {filteredChart.length > 2 && <span>{filteredChart[Math.floor(filteredChart.length / 2)]?.date.slice(5)}</span>}
+            <span>{filteredChart[filteredChart.length - 1]?.date.slice(5)}</span>
           </div>
         </div>
 
@@ -322,10 +378,9 @@ export default function AdminPage() {
                   <th className="pb-2 font-medium">Phase</th>
                   <th className="pb-2 font-medium">TikTok</th>
                   <th className="pb-2 font-medium">Instagram</th>
-                  <th className="pb-2 font-medium">Level</th>
-                  <th className="pb-2 font-medium">XP</th>
                   <th className="pb-2 font-medium">Streak</th>
                   <th className="pb-2 font-medium">Signed</th>
+                  <th className="pb-2 font-medium"></th>
                 </tr>
               </thead>
               <tbody>
@@ -372,19 +427,31 @@ export default function AdminPage() {
                         <span className="text-muted text-xs">—</span>
                       )}
                     </td>
-                    <td className="py-2.5 text-muted">Lv.{creator.level}</td>
-                    <td className="py-2.5 text-muted">{creator.xp}</td>
                     <td className="py-2.5 text-muted">
                       {creator.current_streak > 0 ? `${creator.current_streak}d` : "—"}
                     </td>
                     <td className="py-2.5 text-muted text-xs">
                       {new Date(creator.created_at).toLocaleDateString()}
                     </td>
+                    <td className="py-2.5">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteTargetId(creator.id);
+                          setDeleteTargetName(creator.legal_name);
+                          setShowDeleteConfirm(true);
+                        }}
+                        className="p-1.5 text-muted hover:text-danger hover:bg-danger/10 rounded transition-colors"
+                        title="Delete creator"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 {creators.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="py-6 text-center text-muted">
+                    <td colSpan={7} className="py-6 text-center text-muted">
                       No creators yet
                     </td>
                   </tr>
@@ -429,7 +496,11 @@ export default function AdminPage() {
                       Download Contract PDF
                     </button>
                     <button
-                      onClick={() => setShowDeleteConfirm(true)}
+                      onClick={() => {
+                        setDeleteTargetId(selectedCreatorId);
+                        setDeleteTargetName(creatorDetails?.profile.legal_name || "");
+                        setShowDeleteConfirm(true);
+                      }}
                       className="px-4 py-2 bg-danger/10 text-danger border border-danger/20 rounded-lg text-sm font-medium hover:bg-danger/20 transition-colors"
                     >
                       Delete Creator
@@ -562,7 +633,7 @@ export default function AdminPage() {
           <div className="bg-surface rounded-xl p-6 max-w-sm w-full">
             <h3 className="text-lg font-bold text-foreground mb-2">Delete Creator?</h3>
             <p className="text-sm text-muted mb-4">
-              This will permanently delete <strong>{creatorDetails?.profile.legal_name}</strong> and all their data. This action cannot be undone.
+              This will permanently delete <strong>{deleteTargetName}</strong> and all their data. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
